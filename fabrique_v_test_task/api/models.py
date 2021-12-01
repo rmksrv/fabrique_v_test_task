@@ -1,5 +1,6 @@
 import datetime
 
+from django.conf import settings
 from django.db import models
 from django.utils.timezone import utc
 
@@ -37,7 +38,4 @@ class Question(models.Model):
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     text = models.TextField()
-
-    @property
-    def type(self):
-        return self.question.answer_type
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

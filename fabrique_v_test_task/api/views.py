@@ -1,10 +1,23 @@
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
 from datetime import datetime
+import uuid
+
 from django.utils.timezone import utc
 
-from .models import Question, Quiz
-from .serializers import QuestionSerializer, QuizSerializer
+from django.contrib.auth.models import User
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet, ViewSet
+
+from .models import Answer, Question, Quiz
+from .serializers import AnswerSerializer, QuestionSerializer, QuizSerializer
+
+
+def get_or_create_user(user_id: int) -> User:
+    try:
+        user = User.objects.get(username=user_id)
+    except User.DoesNotExist:
+        user = User(username=user_id)
+        user.save()
+    return user
 
 
 class QuestionViewSet(ModelViewSet):
@@ -26,4 +39,20 @@ class QuizViewSet(ModelViewSet):
         quiz = Quiz.objects.get(id=pk)
         questions = Question.objects.filter(quiz=quiz)
         serializer = QuestionSerializer(questions, many=True)
+        return Response(serializer.data)
+
+
+class AnswerViewSet(ModelViewSet):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+
+    def create(self, request, *args, **kwargs):
+        user = get_or_create_user(request.data.get("user"))
+        return super().create(request, user=user, *args, **kwargs)
+
+
+class UserStatViewSet(ViewSet):
+    def answers(self, request, user_id):
+        answers = Answer.objects.filter(user=get_or_create_user(user_id))
+        serializer = AnswerSerializer(answers, many=True)
         return Response(serializer.data)
