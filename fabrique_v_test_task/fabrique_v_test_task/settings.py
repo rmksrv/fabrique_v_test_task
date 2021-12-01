@@ -1,5 +1,6 @@
 import os
 
+import django.conf.global_settings
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '@4@p)+%8blq@%*5+y@lb_$5!4t^g$uuk6zh%5r816sptt1g7=!'

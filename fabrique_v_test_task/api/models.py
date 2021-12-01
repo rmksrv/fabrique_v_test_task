@@ -15,7 +15,7 @@ class Quiz(models.Model):
     finished_at = models.DateTimeField(verbose_name="Дата окончания", null=True)
 
     def questions(self):
-        return Question.objects.filter(owner=self)
+        return Question.objects.filter(quiz=self)
 
     def is_available(self):
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
@@ -27,7 +27,7 @@ class Question(models.Model):
         verbose_name = "Вопрос"
         verbose_name_plural = "Вопросы"
 
-    owner = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     text = models.TextField(verbose_name="Текст")
     answer_type = models.IntegerField(verbose_name="Тип ответа", choices=ANSWER_TYPE_CHOICES)
 
