@@ -56,3 +56,11 @@ class UserStatViewSet(ViewSet):
         answers = Answer.objects.filter(user=get_or_create_user(user_id))
         serializer = AnswerSerializer(answers, many=True)
         return Response(serializer.data)
+
+    def passed_quizzes(self, request, user_id):
+        user = get_or_create_user(user_id)
+        users_answers_ids = Answer.objects.filter(user=user).values("id")
+        questions_ids = Question.objects.filter(id__in=users_answers_ids).values("id")
+        quizzes_particioated = Quiz.objects.filter(id__in=questions_ids)
+        serializer = QuizSerializer(quizzes_particioated, many=True)
+        return Response(serializer.data)
