@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.utils.timezone import utc
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ViewSet
 
@@ -51,11 +52,14 @@ class AnswerViewSet(ModelViewSet):
 
 
 class UserStatViewSet(ViewSet):
+
+    @swagger_auto_schema(operation_description="Получает все данные ответы пользователем")
     def answers(self, request, user_id):
         answers = Answer.objects.filter(user=get_or_create_user(user_id))
         serializer = AnswerSerializer(answers, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(operation_description="Получает все опросы, в которых учавствовал пользователь")
     def passed_quizzes(self, request, user_id):
         user = get_or_create_user(user_id)
         users_answers_ids = Answer.objects.filter(user=user).values("id")
