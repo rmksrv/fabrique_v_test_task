@@ -1,44 +1,29 @@
-from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
+from datetime import datetime
+from django.utils.timezone import utc
 
-from .models import Quiz
-from .serializers.question_serializers import CreateQuestionSerializer
-from .serializers.quiz_serializers import QuizListSerializer, QuizDetailSerializer, CreateQuizSerializer
+from .models import Question, Quiz
+from .serializers import QuestionSerializer, QuizSerializer
 
 
-class GetAvailableQuizzesView(GenericAPIView):
-    serializer_class = QuizListSerializer
+class QuestionViewSet(ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
 
-    def get(self, request):
-        available_quizzes = filter(Quiz.is_available, Quiz.objects.all())
-        serializer = QuizListSerializer(available_quizzes, many=True)
+
+class QuizViewSet(ModelViewSet):
+    queryset = Quiz.objects.all()
+    serializer_class = QuizSerializer
+
+    def list_of_available(self, request):
+        now = datetime.utcnow().replace(tzinfo=utc)
+        quiz = Quiz.objects.filter(finished_at__gt=now)
+        serializer = QuizSerializer(quiz, many=True)
         return Response(serializer.data)
 
-
-class GetQuizDetailView(GenericAPIView):
-    serializer_class = QuizDetailSerializer
-
-    def get(self, request, pk):
+    def questions(self, request, pk):
         quiz = Quiz.objects.get(id=pk)
-        serializer = QuizDetailSerializer(quiz)
+        questions = Question.objects.filter(quiz=quiz)
+        serializer = QuestionSerializer(questions, many=True)
         return Response(serializer.data)
-
-
-class CreateQuizView(GenericAPIView):
-    serializer_class = CreateQuizSerializer
-
-    def post(self, request):
-        quiz = CreateQuizSerializer(data=request.data)
-        if quiz.is_valid():
-            quiz.save()
-        return Response(quiz.data, status=201)
-
-
-class CreateQuestionView(GenericAPIView):
-    serializer_class = CreateQuestionSerializer
-
-    def post(self, request):
-        question = CreateQuestionSerializer(data=request.data)
-        if question.is_valid():
-            question.save()
-        return Response(question.data, status=201)

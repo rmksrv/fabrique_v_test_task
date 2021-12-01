@@ -1,6 +1,8 @@
 import datetime
-from django.utils.timezone import utc
+
 from django.db import models
+from django.utils.timezone import utc
+
 from .constants import ANSWER_TYPE_CHOICES
 
 
