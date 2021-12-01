@@ -1,9 +1,8 @@
-from datetime import datetime
 import uuid
-
-from django.utils.timezone import utc
+from datetime import datetime
 
 from django.contrib.auth.models import User
+from django.utils.timezone import utc
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ViewSet
 

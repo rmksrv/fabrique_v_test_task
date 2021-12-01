@@ -24,6 +24,12 @@ urlpatterns = [
     path("answer/<int:pk>", views.AnswerViewSet.as_view({"get": "retrieve"}), name="answer-retrieve"),
     path("answer/update/<int:pk>", views.AnswerViewSet.as_view({"post": "partial_update"}), name="answer-update"),
     path("answer/delete/<int:pk>", views.AnswerViewSet.as_view({"delete": "destroy"}), name="answer-delete"),
-    path("user-stat/answers/<int:user_id>", views.UserStatViewSet.as_view({"get": "answers"}), name="user-stat-answers"),
-    path("user-stat/passed-quizzes/<int:user_id>", views.UserStatViewSet.as_view({"get": "passed_quizzes"}), name="user-stat-passed-quizzes"),
+    path(
+        "user-stat/answers/<int:user_id>", views.UserStatViewSet.as_view({"get": "answers"}), name="user-stat-answers"
+    ),
+    path(
+        "user-stat/passed-quizzes/<int:user_id>",
+        views.UserStatViewSet.as_view({"get": "passed_quizzes"}),
+        name="user-stat-passed-quizzes",
+    ),
 ]
